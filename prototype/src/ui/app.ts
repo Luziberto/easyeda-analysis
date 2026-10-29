@@ -9,7 +9,7 @@ import { runErc, describeErc } from '../core/erc.js';
 import { importEasyedaSchematic } from '../format/import-easyeda-sch.js';
 import { exportKicadNet } from '../format/export-kicad.js';
 import { exportSpice, validateSpiceDeck } from '../format/export-spice.js';
-import { runSpiceOperatingPoint, formatSpiceOpSummary } from '../sim/spice-runner.js';
+import { runSpiceSimulationReport } from '../sim/spice-runner.js';
 import { exportSheetSvg } from '../format/export-svg.js';
 import { exportBomCsv } from '../format/export-bom.js';
 import { createPcbView } from './pcb-view.js';
@@ -502,13 +502,12 @@ document.getElementById('validateSpice')?.addEventListener('click', async () => 
     document.querySelector('#tabs button[data-tab="sim"]')?.click();
     return;
   }
-  say('Simulando (.op) com ngspice WASM…');
+  say('Simulando (.op ngspice + transiente)…');
   if (simOut) simOut.textContent = 'A carregar motor WASM…';
   document.querySelector('#tabs button[data-tab="sim"]')?.click();
   try {
     const deck = exportSpice(doc);
-    const res = await runSpiceOperatingPoint(deck);
-    const text = formatSpiceOpSummary(res);
+    const text = await runSpiceSimulationReport(deck);
     if (simOut) simOut.textContent = text;
     say('Simulação SPICE concluída.');
   } catch (err) {

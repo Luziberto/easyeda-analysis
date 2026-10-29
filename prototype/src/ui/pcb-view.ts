@@ -271,6 +271,13 @@ export function createPcbView(svgEl, opts) {
   function onGlUp() { rotDrag = null; }
   if (webglCanvas) {
     webglCanvas.addEventListener('mousedown', onGlDown);
+    webglCanvas.addEventListener('wheel', (e) => {
+      if (!useWebGl) return;
+      e.preventDefault();
+      const rect = webglCanvas.getBoundingClientRect();
+      vp = zoomAt(vp, e.clientX - rect.left, e.clientY - rect.top, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+      render();
+    }, { passive: false });
     window.addEventListener('mousemove', onGlMove);
     window.addEventListener('mouseup', onGlUp);
   }

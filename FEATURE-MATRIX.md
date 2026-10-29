@@ -81,5 +81,6 @@ Complexidade: B = baixa, M = média, A = alta, MA = muito alta. Prioridade: MVP1
 | ERC | heurísticas std-like (`runErc`), painel ERC |
 | Export | KiCad `.net`, SPICE `.cir`, SVG, **BOM CSV**, impressão |
 | Import Std | docType 5 → uma folha por schematic; **B** → bus |
-| **PCB (MVP3)** | Walkaround (+ obstáculos), pour + keepouts, vias, ratsnest MST, Gerber fab (5 ficheiros) + gerbv CI, DRC, WebGL, import PCB + contorno |
-| Testes | 119 unit + 8 e2e |
+| **PCB (MVP3)** | Walkaround (+ obstáculos), pour + keepouts, vias, ratsnest MST, Gerber fab (5 ficheiros) + gerbv CI, DRC, WebGL 3D |
+| **Sim (MVP4)** | ngspice WASM `.op` + resumo `.tran`; painel Sim |
+| Testes | 119 unit + 8 e2e · CI unit/e2e/gerber |
