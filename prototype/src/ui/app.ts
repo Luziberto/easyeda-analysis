@@ -8,7 +8,7 @@ import { buildNetlist, junctions, describeWarning } from '../core/connectivity.j
 import { runErc, describeErc } from '../core/erc.js';
 import { importEasyedaSchematic } from '../format/import-easyeda-sch.js';
 import { exportKicadNet } from '../format/export-kicad.js';
-import { exportSpice } from '../format/export-spice.js';
+import { exportSpice, validateSpiceDeck } from '../format/export-spice.js';
 import { exportSheetSvg } from '../format/export-svg.js';
 import { exportBomCsv } from '../format/export-bom.js';
 import { createPcbView } from './pcb-view.js';
@@ -492,6 +492,11 @@ document.getElementById('netlistBtn').onclick = () => {
 document.getElementById('ercRun')?.addEventListener('click', () => runErcPanel());
 document.getElementById('exportKicad')?.addEventListener('click', () => downloadText('esquematico.net', 'text/plain', exportKicadNet(doc)));
 document.getElementById('exportSpice')?.addEventListener('click', () => downloadText('esquematico.cir', 'text/plain', exportSpice(doc)));
+document.getElementById('validateSpice')?.addEventListener('click', () => {
+  const r = validateSpiceDeck(doc);
+  if (r.ok) say(r.warnings.length ? `SPICE OK — ${r.warnings.join('; ')}` : 'SPICE OK — pronto para ngspice.');
+  else say(`SPICE: ${r.errors.join('; ')}`);
+});
 document.getElementById('exportSvg')?.addEventListener('click', () => {
   const name = `${sh().name.replace(/\s+/g, '_')}.svg`;
   downloadText(name, 'image/svg+xml', exportSheetSvg(sh()));
@@ -547,6 +552,7 @@ document.getElementById('pcbRoute')?.addEventListener('click', () => pcbView.sta
 document.getElementById('pcbPour')?.addEventListener('click', () => pcbView.startPour());
 document.getElementById('pcbPourGnd')?.addEventListener('click', () => pcbView.pourOutline('GND'));
 document.getElementById('pcbWebGl')?.addEventListener('click', () => pcbView.toggleWebGl());
+document.getElementById('pcb3d')?.addEventListener('click', () => pcbView.toggleView3d());
 document.getElementById('pcbPnP')?.addEventListener('click', () => {
   if (!doc.pcb) { say('Gere a PCB primeiro (Sync).'); return; }
   downloadText('pickplace.csv', 'text/csv', exportPickPlace(doc.pcb));

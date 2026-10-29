@@ -1,10 +1,20 @@
-// Render PCB com WebGL2 (trilhas, pads, pour, contorno).
+// Render PCB com WebGL2 (2D ou vista 3D axonométrica).
 import type { PcbBoard } from '../core/pcb-types.js';
 import { FOOTPRINTS } from '../core/pcb-library.js';
+
+const BOARD_Z = 0;
+const COMP_Z = 14;
+
+function project3d(x: number, y: number, z: number): { x: number; y: number } {
+  const k = 0.42;
+  return { x: x + y * k * 0.35, y: y - z * 0.55 + x * k * 0.2 };
+}
 
 export function createPcbWebGl(canvas: HTMLCanvasElement) {
   const gl = canvas.getContext('webgl2', { antialias: true });
   if (!gl) return null;
+
+  let view3d = false;
 
   const vs = `#version 300 es
     in vec2 a_pos;
@@ -74,43 +84,85 @@ export function createPcbWebGl(canvas: HTMLCanvasElement) {
     gl.drawArrays(gl.TRIANGLES, 0, tris.length / 2);
   }
 
+  function drawBox(
+    cx: number, cy: number, w: number, h: number, z0: number, z1: number,
+    scale: number, ox: number, oy: number, width: number, height: number,
+  ) {
+    const corners = [
+      { x: cx - w / 2, y: cy - h / 2 },
+      { x: cx + w / 2, y: cy - h / 2 },
+      { x: cx + w / 2, y: cy + h / 2 },
+      { x: cx - w / 2, y: cy + h / 2 },
+    ];
+    const bot = corners.map((c) => project3d(c.x, c.y, z0));
+    const top = corners.map((c) => project3d(c.x, c.y, z1));
+    lineStrip([...bot, bot[0]], scale, ox, oy, width, height);
+    lineStrip([...top, top[0]], scale, ox, oy, width, height);
+    for (let i = 0; i < 4; i++) lineStrip([bot[i], top[i]], scale, ox, oy, width, height);
+    setColor(0.35, 0.4, 0.45, 0.5);
+    fillPoly(top, scale, ox, oy, width, height);
+  }
+
   return {
+    setView3d(on: boolean) { view3d = on; },
+    isView3d: () => view3d,
     render(board: PcbBoard | null, vp: { x: number; y: number; scale: number }, width: number, height: number) {
       if (!board) return;
       gl.viewport(0, 0, width, height);
       gl.clearColor(0.06, 0.09, 0.12, 1);
       gl.clear(gl.COLOR_BUFFER_BIT);
+
+      const outlinePts = view3d
+        ? board.outline.map((p) => project3d(p.x, p.y, BOARD_Z))
+        : board.outline;
+
       setColor(0.95, 0.45, 0.7);
-      lineStrip(board.outline, vp.scale, vp.x, vp.y, width, height);
+      lineStrip(outlinePts, vp.scale, vp.x, vp.y, width, height);
+      if (view3d) {
+        setColor(0.12, 0.16, 0.14, 0.9);
+        fillPoly(outlinePts, vp.scale, vp.x, vp.y, width, height);
+      }
+
       for (const pour of board.pours ?? []) {
         setColor(0.85, 0.65, 0.1, 0.35);
-        fillPoly(pour.points, vp.scale, vp.x, vp.y, width, height);
+        const pts = view3d ? pour.points.map((p) => project3d(p.x, p.y, BOARD_Z + 0.5)) : pour.points;
+        fillPoly(pts, vp.scale, vp.x, vp.y, width, height);
       }
       for (const t of board.tracks) {
         if (t.layer === 'bottom') setColor(0.4, 0.6, 0.95);
         else setColor(0.95, 0.75, 0.2);
-        lineStrip(t.points, vp.scale, vp.x, vp.y, width, height);
+        const z = t.layer === 'bottom' ? BOARD_Z - 0.5 : BOARD_Z + 0.5;
+        const pts = view3d ? t.points.map((p) => project3d(p.x, p.y, z)) : t.points;
+        lineStrip(pts, vp.scale, vp.x, vp.y, width, height);
       }
+
       for (const fp of board.footprints) {
+        const def = FOOTPRINTS[fp.kind];
+        if (view3d) {
+          setColor(0.55, 0.58, 0.62);
+          drawBox(fp.x, fp.y, def.w, def.h, BOARD_Z + 1, BOARD_Z + COMP_Z, vp.scale, vp.x, vp.y, width, height);
+        }
         setColor(0.7, 0.45, 0.15);
-        for (const p of FOOTPRINTS[fp.kind].pads) {
+        for (const p of def.pads) {
           const cx = fp.x + p.x;
           const cy = fp.y + p.y;
-          lineStrip([
+          const pad = [
             { x: cx - p.w / 2, y: cy - p.h / 2 },
             { x: cx + p.w / 2, y: cy - p.h / 2 },
             { x: cx + p.w / 2, y: cy + p.h / 2 },
             { x: cx - p.w / 2, y: cy + p.h / 2 },
             { x: cx - p.w / 2, y: cy - p.h / 2 },
-          ], vp.scale, vp.x, vp.y, width, height);
+          ];
+          const pts = view3d ? pad.map((q) => project3d(q.x, q.y, BOARD_Z + 1.2)) : pad;
+          lineStrip(pts, vp.scale, vp.x, vp.y, width, height);
         }
       }
       setColor(0.9, 0.75, 0.1);
       for (const v of board.vias ?? []) {
-        lineStrip([
-          { x: v.x - 2, y: v.y },
-          { x: v.x + 2, y: v.y },
-        ], vp.scale, vp.x, vp.y, width, height);
+        const seg = view3d
+          ? [project3d(v.x, v.y, BOARD_Z), project3d(v.x, v.y, BOARD_Z + COMP_Z * 0.6)]
+          : [{ x: v.x - 2, y: v.y }, { x: v.x + 2, y: v.y }];
+        lineStrip(seg, vp.scale, vp.x, vp.y, width, height);
       }
     },
   };

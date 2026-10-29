@@ -119,7 +119,7 @@ export function createPcbView(svgEl, opts) {
       }, g);
     }
     const st = document.getElementById('pcbStatus');
-    if (st) st.textContent = `${b.footprints.length} fp · ${b.tracks.length} trilhas · ${(b.vias ?? []).length} vias · ${(b.pours ?? []).length} pours · ${useWebGl ? 'WebGL' : 'SVG'} · zoom ${vp.scale.toFixed(2)}`;
+    if (st) st.textContent = `${b.footprints.length} fp · ${b.tracks.length} trilhas · ${(b.vias ?? []).length} vias · ${(b.pours ?? []).length} pours · ${useWebGl ? (glRenderer?.isView3d?.() ? 'WebGL 3D' : 'WebGL') : 'SVG'} · zoom ${vp.scale.toFixed(2)}`;
     if (useWebGl && glRenderer && webglCanvas) {
       svgEl.style.display = 'none';
       webglCanvas.style.display = 'block';
@@ -320,6 +320,13 @@ export function createPcbView(svgEl, opts) {
     toggleWebGl() {
       if (!glRenderer) { onMessage?.('WebGL2 indisponível neste navegador.'); return; }
       useWebGl = !useWebGl; render();
+    },
+    toggleView3d() {
+      if (!glRenderer) { onMessage?.('WebGL2 indisponível neste navegador.'); return; }
+      useWebGl = true;
+      glRenderer.setView3d(!glRenderer.isView3d());
+      onMessage?.(glRenderer.isView3d() ? 'Vista 3D (WebGL).' : 'Vista 2D (WebGL).');
+      render();
     },
     getViewport: () => vp,
     startVia() { viaMode = true; trackMode = false; trackPts = null; onMessage?.('Clique para colocar via; Esc cancela.'); },
