@@ -72,3 +72,14 @@ Complexidade: B = baixa, M = média, A = alta, MA = muito alta. Prioridade: MVP1
 | Netlist | `{net:[REF.pin]}` + diff e aplicação contra a PCB |
 | Índice espacial | hash uniforme |
 | Formato | v2 com migração do v1 |
+
+## Protótipo após MVP2 esquemático (v3)
+| Recurso | Protótipo |
+|---|---|
+| Multi-folha | `Project` v3, abas, add/rename/remove/setActive |
+| Barramento | primitiva `Wire.kind === 'bus'`, tecla **B** |
+| ERC | heurísticas std-like (`runErc`), painel ERC |
+| Export | KiCad `.net`, SPICE `.cir`, SVG, **BOM CSV**, impressão |
+| Import Std | docType 5 → uma folha por schematic; **B** → bus |
+| **PCB (MVP3)** | Walkaround (+ obstáculos), pour + keepouts, vias, ratsnest MST, Gerber fab (5 ficheiros) + gerbv CI, DRC, WebGL, import PCB + contorno |
+| Testes | 116 unit + 7 e2e |

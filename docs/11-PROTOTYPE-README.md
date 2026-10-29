@@ -2,6 +2,22 @@
 
 Local: `prototype/`. TypeScript (ES modules) + SVG; build com `tsc` → `dist/`. Licença MIT. Nenhum código, ícone ou símbolo do EasyEDA foi usado.
 
+## Rodada MVP3 início — produto integrado (esquemático + PCB)
+- Modo **Esquemático | PCB**; `project.pcb` no mesmo JSON.
+- **Sync** esquemático → footprints + redes (`diffNetlist`).
+- PCB: camadas top/bottom (visualização), trilhas, **vias**, **ratsnest**, **walkaround (L)**, **copper pour**, **DRC** (clearance pad/trilha/via, contorno, órfãos; marcadores vermelhos no canvas).
+- Export **Gerber** (GTL/GBL/GKO/GTO + Excellon `.drl`), botão **Fab (5 ficheiros)**, pick&place; pads com rotação; ratsnest **MST** entre grupos desconectados; pour com **keepouts** visuais; walkaround evita trilhas/vias; import PCB inclui **contorno layer 10**.
+- Visualização **WebGL2** (botão WebGL no modo PCB).
+- Esquemático: **anotações**, campo **valor**, **símbolos custom** (painel Biblioteca), **PDF** (todas as folhas), **remover folha**, **BOM CSV**.
+
+## Rodada MVP2 esquemático (v3)
+- **Project v3:** multi-folha (`sheets`, `activeSheetId`), migração v1/v2 → v3; netlist de projeto (`buildProjectNetlist`) une redes pelo nome entre folhas.
+- **UI:** abas de folha (`#sheetTabs`), **+ Folha**, renomear por duplo clique; barramento (**B**); inversor **U** na paleta.
+- **ERC:** `src/core/erc.ts` + painel **Executar ERC** (erros/avisos em pt-BR).
+- **Export:** KiCad `.net`, SPICE `.cir`, SVG (`export-svg.ts`); botões na barra.
+- **Import EasyEDA:** docType **1** ou **5** — uma folha por `schematics[]`, sem offset artificial; primitiva **B** → `bus`.
+- **Testes:** **99** unit (`erc.test.mjs`, `exports.test.mjs`, …) + **5** e2e Playwright.
+
 ## Rodada 10: TypeScript, espelhar, import multi-folha, Playwright e CI
 - **TypeScript:** `src/**/*.ts` → `npm run build` (`tsc`) → `dist/`; a UI carrega `./dist/ui/app.js`.
 - Tipos em `src/core/types.ts`; biblioteca `SYMBOLS` tipada como `Record<SymbolKind, SymbolDef>`.
@@ -16,13 +32,13 @@ Local: `prototype/`. TypeScript (ES modules) + SVG; build com `tsc` → `dist/`.
 cd prototype
 npm install
 npm run build          # ou implícito em test/serve
-npm test               # build + 91 testes Node
-npm run test:e2e       # build + Playwright
+npm test               # build + 116 testes Node
+npm run test:e2e       # build + Playwright (7 cenários)
 npm run serve          # build + http://localhost:8080/
 ```
 
 ### UI (rodadas 9–10)
-- Layout tipo editor EDA: barra superior, paleta lateral, canvas, painel Inspector / Netlist / Atalhos.
+- Layout tipo editor EDA: barra superior, abas de folha, paleta lateral, canvas, painel Inspector / Netlist / ERC / Atalhos.
 - Seleção por caixa, inspector (`setRef` / `setNet`), autosave IndexedDB, import EasyEDA.
 - Estilos em `src/ui/styles.css`.
 
@@ -57,7 +73,7 @@ A UI **não foi exercitada num navegador**, que não estava disponível. Foi ver
 
 ## Limitações conhecidas
 - Mover um símbolo arrasta só as extremidades de fio presas aos seus pinos; um pino que caiu no meio de um fio não leva o fio junto.
-- Não há barramentos, hierarquia de folhas nem portas entre folhas (a "porta" só dá nome a uma rede, dentro da mesma folha).
+- Não há editor de símbolos nem PDF; portas entre folhas unem redes pelo **nome** (netlist de projeto), com aviso `orphan-port`.
 - O índice espacial teve só uma checagem simples de desempenho, sem benchmark formal.
 - `addWire(pontos)` só arredonda para inteiros; quem faz o snap à grade é a UI.
 - A UI foi testada por carga headless (o módulo inicializa sem erro), não por interação automatizada.
