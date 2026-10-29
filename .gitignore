@@ -2,5 +2,14 @@ prototype/node_modules/
 prototype/dist/
 prototype/playwright-report/
 prototype/test-results/
+data/
+*.sqlite
+*.sqlite-journal
+.env
+.env.*
+easyeda.cookie
 *.log
 .DS_Store
+prototype/.cloudflared-quick.log
+prototype/.cloudflared-quick.pid
+prototype/lcsc-library.json

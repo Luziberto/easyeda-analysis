@@ -4,72 +4,189 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Proto EDA — Esquemático + PCB</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%233b82f6' width='32' height='32' rx='6'/><path stroke='%23fff' stroke-width='2' fill='none' d='M8 16h6M18 16h6M14 10v12'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230284c7' width='32' height='32' rx='4'/><path stroke='%23fff' stroke-width='2' fill='none' d='M8 16h6M18 16h6M14 10v12'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./src/ui/styles.css">
 </head>
 <body>
   <header id="header">
-    <div class="brand">Proto EDA<small>v3 + PCB</small></div>
+    <div class="header-start">
+      <div class="brand-badge" aria-hidden="true">
+        <span class="material-symbols-outlined brand-icon">memory</span>
+        <span class="brand-text">Proto EDA</span>
+      </div>
+      <span id="projectBadge" class="project-badge" title="Projeto atual">Sem título</span>
+    </div>
+
     <div class="tool-group mode-group" role="tablist" aria-label="Modo de edição">
-      <button type="button" id="modeSch" class="mode on" data-mode="sch">Esquemático</button>
-      <button type="button" id="modePcb" class="mode" data-mode="pcb">PCB</button>
+      <button type="button" id="modeSch" class="mode on" data-mode="sch" aria-label="Esquemático" title="Esquemático">
+        <span class="material-symbols-outlined" aria-hidden="true">schema</span>
+        <span class="mode-label">Esquemático</span>
+      </button>
+      <button type="button" id="modePcb" class="mode" data-mode="pcb" aria-label="PCB" title="PCB">
+        <span class="material-symbols-outlined" aria-hidden="true">developer_board</span>
+        <span class="mode-label">PCB</span>
+      </button>
     </div>
-    <div class="tool-group">
-      <button type="button" id="newDoc" title="Novo documento">Novo</button>
-      <label class="btn"><button type="button" id="openBtn">Abrir</button><input id="open" type="file" accept=".json,application/json" hidden></label>
-      <button type="button" id="save">Salvar JSON</button>
-      <label class="btn"><button type="button" id="importStdBtn">Importar EasyEDA</button><input id="importStd" type="file" accept=".json,application/json" hidden></label>
+
+    <div class="header-toolbar" role="toolbar" aria-label="Ferramentas">
+      <div class="tool-group" aria-label="Ficheiro">
+        <button type="button" id="newDoc" class="btn-icon" aria-label="Novo documento" title="Novo documento">
+          <span class="material-symbols-outlined" aria-hidden="true">note_add</span>
+        </button>
+        <label class="btn btn-icon-wrap">
+          <button type="button" id="openBtn" class="btn-icon" aria-label="Abrir JSON" title="Abrir JSON">
+            <span class="material-symbols-outlined" aria-hidden="true">folder_open</span>
+          </button>
+          <input id="open" type="file" accept=".json,application/json" hidden>
+        </label>
+        <button type="button" id="save" class="btn-icon" aria-label="Salvar JSON" title="Salvar JSON">
+          <span class="material-symbols-outlined" aria-hidden="true">save</span>
+        </button>
+        <label class="btn btn-icon-wrap">
+          <button type="button" id="importStdBtn" class="btn-icon" aria-label="Importar EasyEDA" title="Importar EasyEDA">
+            <span class="material-symbols-outlined" aria-hidden="true">cloud_upload</span>
+          </button>
+          <input id="importStd" type="file" accept=".json,application/json" hidden>
+        </label>
+      </div>
+      <div class="tool-group" aria-label="Edição">
+        <button type="button" id="undo" class="btn-icon" aria-label="Desfazer (Ctrl+Z)" title="Desfazer (Ctrl+Z)">
+          <span class="material-symbols-outlined" aria-hidden="true">undo</span>
+        </button>
+        <button type="button" id="redo" class="btn-icon" aria-label="Refazer (Ctrl+Y)" title="Refazer (Ctrl+Y)">
+          <span class="material-symbols-outlined" aria-hidden="true">redo</span>
+        </button>
+        <button type="button" id="fit" class="btn-icon" aria-label="Enquadrar" title="Enquadrar">
+          <span class="material-symbols-outlined" aria-hidden="true">fit_screen</span>
+        </button>
+        <span class="tool-sep" aria-hidden="true"></span>
+        <button type="button" id="wireBtn" class="btn-icon tool-toggle" aria-label="Fio (W)" title="Fio (W)">
+          <span class="material-symbols-outlined" aria-hidden="true">polyline</span>
+        </button>
+        <button type="button" id="busBtn" class="btn-icon tool-toggle" aria-label="Barramento (B)" title="Barramento (B)">
+          <span class="material-symbols-outlined" aria-hidden="true">alt_route</span>
+        </button>
+        <button type="button" id="rename" class="btn-icon" aria-label="Renomear rede" title="Renomear rede">
+          <span class="material-symbols-outlined" aria-hidden="true">label</span>
+        </button>
+        <button type="button" id="rot" class="btn-icon" aria-label="Girar (R)" title="Girar (R)">
+          <span class="material-symbols-outlined" aria-hidden="true">rotate_right</span>
+        </button>
+        <button type="button" id="flip" class="btn-icon" aria-label="Espelhar (X)" title="Espelhar (X)">
+          <span class="material-symbols-outlined" aria-hidden="true">flip</span>
+        </button>
+        <button type="button" id="del" class="btn-icon danger" aria-label="Excluir (Delete)" title="Excluir (Delete)">
+          <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+        </button>
+        <button type="button" id="netlistBtn" class="btn-icon" aria-label="Netlist no painel" title="Netlist no painel">
+          <span class="material-symbols-outlined" aria-hidden="true">hub</span>
+        </button>
+      </div>
+      <details class="export-menu tool-group">
+        <summary class="btn-icon export-trigger" aria-label="Exportar e relatórios" title="Exportar e relatórios">
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        </summary>
+        <div class="export-menu-panel">
+          <button type="button" id="exportKicad"><span class="material-symbols-outlined menu-ico">account_tree</span>KiCad .net</button>
+          <button type="button" id="exportSpice"><span class="material-symbols-outlined menu-ico">bolt</span>SPICE .cir</button>
+          <button type="button" id="validateSpice"><span class="material-symbols-outlined menu-ico">play_circle</span>Sim (.op)</button>
+          <button type="button" id="exportBom"><span class="material-symbols-outlined menu-ico">inventory_2</span>BOM CSV</button>
+          <button type="button" id="exportSvg"><span class="material-symbols-outlined menu-ico">image</span>SVG folha</button>
+          <button type="button" id="printSch"><span class="material-symbols-outlined menu-ico">picture_as_pdf</span>PDF / imprimir</button>
+        </div>
+      </details>
     </div>
-    <div class="tool-group">
-      <button type="button" id="wireBtn" title="W — clique adiciona vértices; duplo clique ou Enter termina">Fio (W)</button>
-      <button type="button" id="busBtn" title="B — barramento">Barramento (B)</button>
-      <button type="button" id="rename" title="Renomear rede do item selecionado">Renomear rede</button>
-      <button type="button" id="rot" title="R">Girar (R)</button>
-      <button type="button" id="flip" title="X — espelhar horizontal">Espelhar (X)</button>
-      <button type="button" id="del" class="danger" title="Delete">Excluir</button>
-      <button type="button" id="undo" title="Ctrl+Z">Desfazer</button>
-      <button type="button" id="redo" title="Ctrl+Y">Refazer</button>
-    </div>
-    <div class="tool-group">
-      <button type="button" id="exportKicad" title="Netlist .net">KiCad .net</button>
-      <button type="button" id="exportSpice" title="SPICE .cir">SPICE</button>
-      <button type="button" id="validateSpice" title="Validar deck SPICE">Sim</button>
-      <button type="button" id="exportBom" title="BOM CSV">BOM</button>
-      <button type="button" id="exportSvg" title="SVG da folha ativa">SVG</button>
-      <button type="button" id="printSch" title="PDF via impressão">PDF</button>
-      <button type="button" id="netlistBtn">Netlist</button>
-      <button type="button" id="fit" title="Reset zoom e pan">Enquadrar</button>
+
+    <div class="header-end">
+      <button type="button" id="ercQuick" class="btn-icon btn-erc" aria-label="Executar ERC" title="Executar ERC">
+        <span class="material-symbols-outlined" aria-hidden="true">rule</span>
+      </button>
+      <button type="button" id="openLcscLib" class="btn-icon" aria-label="Biblioteca LCSC" title="Biblioteca LCSC (espelho local)">
+        <span class="material-symbols-outlined" aria-hidden="true">library_books</span>
+      </button>
+      <button type="button" id="toggleSidebar" class="btn-icon btn-inspector" aria-label="Mostrar ou ocultar painel" title="Mostrar/ocultar painel">
+        <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+      </button>
     </div>
   </header>
 
   <div id="workspace" class="sch-mode">
     <nav id="palette" aria-label="Componentes">
-      <button type="button" data-add="resistor" title="Resistor"><span class="ico">⏚</span> R</button>
-      <button type="button" data-add="capacitor" title="Capacitor"><span class="ico">⎓</span> C</button>
-      <button type="button" data-add="led" title="LED"><span class="ico">◉</span> LED</button>
-      <button type="button" data-add="ground" title="GND"><span class="ico">⏚</span> GND</button>
-      <button type="button" data-add="vcc" title="VCC"><span class="ico">+</span> VCC</button>
-      <button type="button" data-add="netlabel" title="Rótulo de rede"><span class="ico">N</span> Rótulo</button>
-      <button type="button" data-add="port" title="Porta"><span class="ico">▷</span> Porta</button>
-      <button type="button" data-add="inverter" title="Inversor CMOS"><span class="ico">¬</span> U</button>
-      <button type="button" data-add="annotate" title="Texto"><span class="ico">T</span> Nota</button>
-      <button type="button" data-add="generic" title="Bloco IC 2 pinos"><span class="ico">▢</span> IC</button>
+      <button type="button" data-add="resistor" aria-label="Resistor (R)" data-tip="Resistor (R)">
+        <svg class="ico sym-svg" viewBox="0 0 32 16" aria-hidden="true" focusable="false">
+          <path d="M2 8h5l1.5-3 2.5 6 2.5-6 1.5 3h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" data-add="capacitor" aria-label="Capacitor (C)" data-tip="Capacitor (C)">
+        <svg class="ico sym-svg" viewBox="0 0 32 16" aria-hidden="true" focusable="false">
+          <line x1="8" y1="3" x2="8" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="24" y1="3" x2="24" y2="13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="8" y1="5" x2="24" y2="5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="8" y1="11" x2="24" y2="11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button type="button" data-add="led" aria-label="LED" data-tip="LED">
+        <span class="material-symbols-outlined ico" aria-hidden="true">lightbulb</span>
+      </button>
+      <button type="button" data-add="ground" aria-label="GND" data-tip="GND (terra)">
+        <span class="material-symbols-outlined ico" aria-hidden="true">electrical_services</span>
+      </button>
+      <button type="button" data-add="vcc" aria-label="VCC" data-tip="VCC (+ alimentação)">
+        <span class="material-symbols-outlined ico" aria-hidden="true">bolt</span>
+      </button>
+      <button type="button" data-add="netlabel" aria-label="Rótulo de rede" data-tip="Rótulo de rede">
+        <span class="material-symbols-outlined ico" aria-hidden="true">label</span>
+      </button>
+      <button type="button" data-add="port" aria-label="Porta" data-tip="Porta (net I/O)">
+        <span class="material-symbols-outlined ico" aria-hidden="true">input</span>
+      </button>
+      <button type="button" data-add="inverter" aria-label="Inversor" data-tip="Inversor CMOS">
+        <span class="material-symbols-outlined ico" aria-hidden="true">functions</span>
+      </button>
+      <button type="button" data-add="annotate" aria-label="Nota de texto" data-tip="Texto / anotação">
+        <span class="material-symbols-outlined ico" aria-hidden="true">text_fields</span>
+      </button>
+      <button type="button" data-add="generic" aria-label="IC 2 pinos" data-tip="Bloco IC (2 pinos)">
+        <span class="material-symbols-outlined ico" aria-hidden="true">category</span>
+      </button>
     </nav>
     <div id="canvas-column">
-      <div id="sheetTabs" aria-label="Folhas do projeto"></div>
-      <div id="canvas-wrap">
-      <svg id="canvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Área de desenho"></svg>
-      <div id="marquee" aria-hidden="true"></div>
+      <div id="canvas-wrap" class="cad-surface">
+        <svg id="canvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Área de desenho"></svg>
+        <div id="marquee" aria-hidden="true"></div>
       </div>
+      <div id="sheetTabs" aria-label="Folhas do projeto"></div>
     </div>
     <aside id="sidebar">
       <div id="tabs">
-        <button type="button" data-tab="inspector" class="active">Inspector</button>
-        <button type="button" data-tab="netlist">Netlist</button>
-        <button type="button" data-tab="erc">ERC</button>
-        <button type="button" data-tab="sim">Sim</button>
-        <button type="button" data-tab="library">Símbolos</button>
-        <button type="button" data-tab="help">Atalhos</button>
+        <button type="button" data-tab="inspector" class="active">
+          <span class="material-symbols-outlined tab-ico">tune</span>
+          Inspector
+        </button>
+        <button type="button" data-tab="netlist">
+          <span class="material-symbols-outlined tab-ico">hub</span>
+          Netlist
+        </button>
+        <button type="button" data-tab="erc">
+          <span class="material-symbols-outlined tab-ico">rule</span>
+          ERC
+        </button>
+        <button type="button" data-tab="sim">
+          <span class="material-symbols-outlined tab-ico">timeline</span>
+          Sim
+        </button>
+        <button type="button" data-tab="library">
+          <span class="material-symbols-outlined tab-ico">category</span>
+          Símbolos
+        </button>
+        <button type="button" data-tab="help">
+          <span class="material-symbols-outlined tab-ico">help</span>
+          Atalhos
+        </button>
       </div>
       <div id="panel-inspector" class="panel active">
         <h3>Seleção</h3>
@@ -77,7 +194,7 @@
       </div>
       <div id="panel-netlist" class="panel">
         <h3>Netlist e avisos</h3>
-        <pre id="out">Clique em "Netlist" na barra superior ou edite o esquemático.</pre>
+        <pre id="out">Clique em Netlist no menu Exportar ou edite o esquemático.</pre>
       </div>
       <div id="panel-erc" class="panel">
         <h3>ERC (heurístico)</h3>
@@ -86,7 +203,7 @@
       </div>
       <div id="panel-sim" class="panel">
         <h3>Simulação SPICE</h3>
-        <p class="muted">Botão <strong>Sim</strong> na barra — ngspice WASM (.op).</p>
+        <p class="muted">Menu <strong>Exportar → Sim (.op)</strong> — ngspice WASM.</p>
         <pre id="simOut" class="erc-out">Aguardando simulação…</pre>
       </div>
       <div id="panel-library" class="panel">
@@ -101,7 +218,7 @@
         <div class="help-kbd">
           <kbd>W</kbd><span>Modo fio (clique = vértice; duplo clique / Enter = terminar)</span>
           <kbd>B</kbd><span>Modo barramento (mesma lógica do fio)</span>
-          <kbd>+ Folha</kbd><span>Abas acima do canvas; duplo clique renomeia</span>
+          <kbd>+ Folha</kbd><span>Abas abaixo do canvas; duplo clique renomeia</span>
           <kbd>Esc</kbd><span>Cancelar fio / limpar seleção</span>
           <kbd>3D</kbd><span>PCB WebGL axonométrico — arraste no canvas para rodar</span>
           <kbd>X</kbd><span>Espelhar horizontalmente</span>
@@ -118,24 +235,62 @@
     </aside>
   </div>
 
-  <div id="pcbWorkspace">
-    <div class="pcb-toolbar">
-      <button type="button" id="pcbSync" class="primary">Atualizar do esquemático</button>
-      <button type="button" id="pcbLayerTop" class="on">Top</button>
-      <button type="button" id="pcbLayerBot">Bottom</button>
-      <button type="button" id="pcbTrack">Trilha (T)</button>
-      <button type="button" id="pcbVia">Via (V)</button>
-      <button type="button" id="pcbRats">Ratsnest</button>
-      <label class="btn"><button type="button" id="pcbImportBtn">Import PCB</button><input id="pcbImport" type="file" accept=".json" hidden></label>
-      <button type="button" id="pcbRoute">Walk (L)</button>
-      <button type="button" id="pcbPour">Pour</button>
-      <button type="button" id="pcbPourGnd">Pour GND</button>
-      <button type="button" id="pcbWebGl">WebGL</button>
-      <button type="button" id="pcb3d">3D</button>
-      <button type="button" id="pcbFab">Fab (5 ficheiros)</button>
-      <button type="button" id="pcbPnP">Pick&amp;Place</button>
-      <button type="button" id="pcbDrc">DRC</button>
-      <button type="button" id="pcbFit">Enquadrar</button>
+  <div id="pcbWorkspace" hidden>
+    <div class="pcb-toolbar" role="toolbar" aria-label="Ferramentas PCB">
+      <button type="button" id="pcbSync" class="btn-icon primary" aria-label="Atualizar do esquemático" title="Atualizar do esquemático">
+        <span class="material-symbols-outlined" aria-hidden="true">sync</span>
+      </button>
+      <span class="tool-sep" aria-hidden="true"></span>
+      <button type="button" id="pcbLayerTop" class="btn-icon on" aria-label="Camada top" title="Camada top">
+        <span class="material-symbols-outlined" aria-hidden="true">layers</span>
+      </button>
+      <button type="button" id="pcbLayerBot" class="btn-icon" aria-label="Camada bottom" title="Camada bottom">
+        <span class="material-symbols-outlined" aria-hidden="true">flip_to_back</span>
+      </button>
+      <span class="tool-sep" aria-hidden="true"></span>
+      <button type="button" id="pcbTrack" class="btn-icon tool-toggle" aria-label="Trilha (T)" title="Trilha (T)">
+        <span class="material-symbols-outlined" aria-hidden="true">route</span>
+      </button>
+      <button type="button" id="pcbVia" class="btn-icon" aria-label="Via (V)" title="Via (V)">
+        <span class="material-symbols-outlined" aria-hidden="true">adjust</span>
+      </button>
+      <button type="button" id="pcbRats" class="btn-icon" aria-label="Ratsnest" title="Ratsnest">
+        <span class="material-symbols-outlined" aria-hidden="true">hub</span>
+      </button>
+      <button type="button" id="pcbRoute" class="btn-icon" aria-label="Walk router (L)" title="Walk router (L)">
+        <span class="material-symbols-outlined" aria-hidden="true">directions_walk</span>
+      </button>
+      <button type="button" id="pcbPour" class="btn-icon" aria-label="Copper pour" title="Copper pour">
+        <span class="material-symbols-outlined" aria-hidden="true">gradient</span>
+      </button>
+      <button type="button" id="pcbPourGnd" class="btn-icon" aria-label="Pour GND" title="Pour GND">
+        <span class="material-symbols-outlined" aria-hidden="true">filter_hdr</span>
+      </button>
+      <span class="tool-sep" aria-hidden="true"></span>
+      <label class="btn btn-icon-wrap">
+        <button type="button" id="pcbImportBtn" class="btn-icon" aria-label="Importar PCB EasyEDA" title="Importar PCB">
+          <span class="material-symbols-outlined" aria-hidden="true">upload_file</span>
+        </button>
+        <input id="pcbImport" type="file" accept=".json" hidden>
+      </label>
+      <button type="button" id="pcbWebGl" class="btn-icon" aria-label="Vista WebGL" title="WebGL">
+        <span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>
+      </button>
+      <button type="button" id="pcb3d" class="btn-icon" aria-label="Vista 3D" title="3D">
+        <span class="material-symbols-outlined" aria-hidden="true">3d_rotation</span>
+      </button>
+      <button type="button" id="pcbFab" class="btn-icon" aria-label="Pacote fab (5 ficheiros)" title="Fab (5 ficheiros)">
+        <span class="material-symbols-outlined" aria-hidden="true">precision_manufacturing</span>
+      </button>
+      <button type="button" id="pcbPnP" class="btn-icon" aria-label="Pick and place" title="Pick &amp; Place">
+        <span class="material-symbols-outlined" aria-hidden="true">table_chart</span>
+      </button>
+      <button type="button" id="pcbDrc" class="btn-icon btn-erc" aria-label="DRC" title="DRC">
+        <span class="material-symbols-outlined" aria-hidden="true">rule</span>
+      </button>
+      <button type="button" id="pcbFit" class="btn-icon" aria-label="Enquadrar PCB" title="Enquadrar">
+        <span class="material-symbols-outlined" aria-hidden="true">fit_screen</span>
+      </button>
     </div>
     <svg id="pcbCanvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Editor PCB"></svg>
     <canvas id="pcbGl" aria-label="Editor PCB WebGL"></canvas>
@@ -147,6 +302,27 @@
     <span id="pcbStatus" hidden></span>
     <span id="warnings"></span>
   </footer>
+
+  <div id="lcscLibrary" class="lcsc-library" hidden>
+    <div class="lcsc-library-shell" role="dialog" aria-labelledby="lcscTitle" aria-modal="true">
+      <header class="lcsc-library-head">
+        <div>
+          <h2 id="lcscTitle">Biblioteca LCSC</h2>
+          <p id="lcscMeta" class="muted lcsc-meta"></p>
+        </div>
+        <input id="lcscSearch" type="search" placeholder="Keywords…" autocomplete="off" aria-label="Buscar componentes">
+        <button type="button" id="lcscClose" class="btn-icon" aria-label="Fechar biblioteca" title="Fechar">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </header>
+      <div class="lcsc-library-body">
+        <nav id="lcscTree" class="lcsc-tree" aria-label="Categorias LCSC"></nav>
+        <div id="lcscList" class="lcsc-list"></div>
+        <aside id="lcscDetail" class="lcsc-detail"></aside>
+      </div>
+      <footer id="lcscBreadcrumb" class="lcsc-breadcrumb muted"></footer>
+    </div>
+  </div>
 
   <div id="dialog" hidden>
     <div id="dialogCard">

@@ -30,6 +30,7 @@ test('segunda folha e export SVG', async ({ page }) => {
   await page.locator('#sheetTabs .add').click();
   await expect(page.locator('#sheetTabs .sheet-tab')).toHaveCount(3);
   await page.locator('[data-add=resistor]').click();
+  await page.locator('.export-menu summary').click();
   await page.locator('#exportSvg').click();
   await expect(page.locator('#status')).toContainText('2 folha');
 });
@@ -38,9 +39,9 @@ test('modo fio: botão ativa e desativa com Escape', async ({ page }) => {
   await page.goto('/index.html');
   const wire = page.locator('#wireBtn');
   await wire.click();
-  await expect(wire).toHaveClass(/on/);
+  await expect(wire).toHaveClass(/\bon\b/);
   await page.keyboard.press('Escape');
-  await expect(wire).not.toHaveClass(/on/);
+  await expect(wire).not.toHaveClass(/\bon\b/);
 });
 
 test('netlist abre painel lateral', async ({ page }) => {

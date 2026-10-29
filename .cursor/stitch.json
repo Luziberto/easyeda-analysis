@@ -1,0 +1,12 @@
+{
+  "projectId": "18389289137739646319",
+  "projectTitle": "Proto EDA — easyeda-analysis",
+  "designSystem": "EDA Precision Technical Studio",
+  "screens": {
+    "mainEditor": {
+      "id": "5b87d8643bfb40f9a854d3e8c71a34cf",
+      "title": "Proto EDA - Main Schematic Editor",
+      "htmlFile": "projects/18389289137739646319/files/0c27624c09b54142b05981aff0d3453f"
+    }
+  }
+}

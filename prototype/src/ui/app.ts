@@ -20,6 +20,8 @@ import { exportGerberTop, exportExcellonDrill, exportPickPlace, exportFabBundle 
 import * as T from './controller.js';
 import { showPrompt, showConfirm } from './dialog.js';
 import { saveAutosave, loadAutosave, clearAutosave } from './storage.js';
+import { initTooltips } from './tooltips.js';
+import { initLcscLibrary } from './lcsc-library.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const svg = document.getElementById('canvas');
@@ -40,8 +42,12 @@ let alt = false;
 let lastErc = null;
 let autosaveTimer = null;
 let appMode = 'sch';
+let projectLabel = 'Sem título';
 
 const say = (m) => { message = m; render(); };
+const updateProjectBadge = () => {
+  document.getElementById('projectBadge')?.replaceChildren(document.createTextNode(projectLabel));
+};
 const el = (n, a = {}, p) => {
   const e = document.createElementNS(NS, n);
   for (const k in a) e.setAttribute(k, a[k]);
@@ -296,6 +302,7 @@ function render() {
   renderMarquee();
   renderInspector();
   renderSheetTabs();
+  updateProjectBadge();
 }
 
 hist.on(() => { render(); scheduleAutosave(); });
@@ -491,6 +498,13 @@ document.getElementById('netlistBtn').onclick = () => {
 };
 
 document.getElementById('ercRun')?.addEventListener('click', () => runErcPanel());
+document.getElementById('ercQuick')?.addEventListener('click', () => {
+  document.querySelector('#tabs button[data-tab="erc"]')?.click();
+  runErcPanel();
+});
+document.getElementById('toggleSidebar')?.addEventListener('click', () => {
+  document.body.classList.toggle('sidebar-collapsed');
+});
 document.getElementById('exportKicad')?.addEventListener('click', () => downloadText('esquematico.net', 'text/plain', exportKicadNet(doc)));
 document.getElementById('exportSpice')?.addEventListener('click', () => downloadText('esquematico.cir', 'text/plain', exportSpice(doc)));
 document.getElementById('validateSpice')?.addEventListener('click', async () => {
@@ -528,6 +542,7 @@ document.getElementById('printSch')?.addEventListener('click', () => {
 function setAppMode(mode) {
   appMode = mode;
   document.body.classList.toggle('pcb-mode', mode === 'pcb');
+  document.getElementById('pcbWorkspace')?.toggleAttribute('hidden', mode !== 'pcb');
   document.getElementById('modeSch')?.classList.toggle('on', mode === 'sch');
   document.getElementById('modePcb')?.classList.toggle('on', mode === 'pcb');
   if (mode === 'pcb') pcbView.render();
@@ -637,6 +652,7 @@ document.getElementById('newDoc').onclick = async () => {
   }
   doc = createDocument();
   delete doc.pcb;
+  projectLabel = 'Sem título';
   hist.reset(doc);
   selection.clear();
   vp = createViewport();
@@ -653,6 +669,7 @@ document.getElementById('open').onchange = async (e) => {
     doc = deserialize(await f.text());
     hist.reset(doc);
     selection.clear();
+    projectLabel = f.name;
     say(`Aberto: ${f.name}`);
   } catch (err) {
     say('');
@@ -670,6 +687,7 @@ document.getElementById('importStd').onchange = async (e) => {
     doc = imported;
     hist.reset(doc);
     selection.clear();
+    projectLabel = f.name || 'EasyEDA import';
     say(skip.length ? `Importado; ignorados: ${skip.slice(0, 3).join(', ')}${skip.length > 3 ? '…' : ''}` : 'Importado do EasyEDA Std.');
   } catch (err) {
     say('');
@@ -722,3 +740,6 @@ window.addEventListener('resize', () => { render(); if (appMode === 'pcb') pcbVi
   }
   render();
 })();
+
+initTooltips();
+initLcscLibrary({ onMessage: say });
