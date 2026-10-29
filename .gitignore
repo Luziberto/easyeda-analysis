@@ -1,0 +1,6 @@
+prototype/node_modules/
+prototype/dist/
+prototype/playwright-report/
+prototype/test-results/
+*.log
+.DS_Store

@@ -1,0 +1,26 @@
+✔ round-trip byte-a-byte (JSON normalizado): synthetic-schematic.json (1.569592ms)
+✔ round-trip duplo é idempotente: synthetic-schematic.json (0.976475ms)
+✔ round-trip byte-a-byte (JSON normalizado): synthetic-pcb.json (0.316694ms)
+✔ round-trip duplo é idempotente: synthetic-pcb.json (0.395381ms)
+✔ round-trip byte-a-byte (JSON normalizado): synthetic-project.json (1.258032ms)
+✔ round-trip duplo é idempotente: synthetic-project.json (0.289964ms)
+✔ round-trip byte-a-byte (JSON normalizado): synthetic-legacy-head.json (0.132171ms)
+✔ round-trip duplo é idempotente: synthetic-legacy-head.json (0.100477ms)
+✔ docType: head objeto e head legado em string (0.218831ms)
+✔ wire W: campos nomeados (0.309365ms)
+✔ PAD PCB: 19 campos após o comando (0.170601ms)
+✔ LIB composto com sub-shapes #@$ e pino ^^ (0.15368ms)
+✔ primitiva desconhecida é preservada (0.068163ms)
+✔ campos extras além do esquema são preservados (0.060615ms)
+✔ edição de campo reflete na serialização (0.074549ms)
+✔ conectividade: 3 redes no esquema sintético (0.73347ms)
+✔ unidades: 1 unidade = 10 mil = 0,254 mm (0.136603ms)
+✔ projeto docType 5: dataStr aninhado é analisado (0.166926ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.450214

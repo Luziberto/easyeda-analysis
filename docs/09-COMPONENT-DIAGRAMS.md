@@ -1,0 +1,44 @@
+# 09 — Diagramas de componentes
+
+```mermaid
+classDiagram
+  class Document {
+    head
+    canvas
+    shape[]
+    BBox
+  }
+  class Shape {
+    cmd
+    fields
+    gId
+  }
+  class LIB {
+    c_para
+    puuid
+    children
+  }
+  class FOOTPRINT {
+    children
+  }
+  class Pin {
+    config
+    pinDot
+    path
+    name
+    num
+    dot
+    clock
+  }
+  Document "1" o-- "*" Shape
+  Shape <|-- LIB
+  Shape <|-- FOOTPRINT
+  Shape <|-- Pin
+  Shape <|-- Wire
+  Shape <|-- Track
+  Shape <|-- Pad
+  Shape <|-- Via
+  LIB o-- Pin
+  FOOTPRINT o-- Pad
+```
+Este modelo é CONFIRMADA (doc). A hierarquia de classes interna do EasyEDA é DESCONHECIDA. O diagrama representa a estrutura de dados, não o código deles.

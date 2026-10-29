@@ -1,0 +1,10 @@
+graph TB
+  UI[UI shell: TS + framework leve] --> Cmd[Command bus + History]
+  Cmd --> Model[Document model<br/>imutável/estruturado, IDs estáveis]
+  Model --> Idx[Índices: R-tree, conectividade]
+  Model --> Ren[Renderer<br/>SVG MVP1-2 → WebGL2/Canvas MVP3+]
+  Model --> IO[IO: formato próprio JSON, import Std, export SVG/Gerber/Excellon/BOM/SPICE]
+  Model --> Wk[Workers: DRC, pour, ratsnest, simulação ngspice-wasm]
+  Model --> Store[(IndexedDB local-first + autosave)]
+  Store -.-> Sync[Sync opcional: servidor CRDT/OT, MVP4]
+  Plg[Plugins sandboxed] --> Cmd

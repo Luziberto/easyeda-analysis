@@ -1,0 +1,11 @@
+flowchart LR
+  A[GET /api/documents/uuid] --> B[dataStr JSON]
+  B --> C[extractDocType head]
+  C --> D[solver → svgStr + jsonCache]
+  D --> E[SVG DOM editável]
+  E -->|edição| E
+  E --> F[serializa shape strings ~]
+  F --> G[POST update / update_canvas]
+  E -.-> H[IndexedDB recuperação]
+  E --> I[Gerber/Excellon → JSZip → download]
+  E --> J[netlist SPICE → /simulate → waveForm]

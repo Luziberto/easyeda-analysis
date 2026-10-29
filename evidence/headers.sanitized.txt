@@ -1,0 +1,13 @@
+HTTP/2 200 
+content-type: text/html; charset=UTF-8
+date: Thu, 29 Oct 2026 04:08:12 GMT
+content-security-policy: child-src 'self' blob: https://*.easyeda.com https://*.jlcpcb.com www.google.com https://www.youtube.com; frame-ancestors 'self' https://*.jlcpcb.com  www.google.com https://www.youtube.com https://*.easyeda.com
+server: nginx
+vary: Accept-Encoding
+cache-control: no-cache, private
+strict-transport-security: max-age=300; includeSubdomains
+x-frame-options: SAMEORIGIN
+x-cache: Miss from cloudfront
+via: 1.1 c0be55b273a49ef48544d75686c8f398.cloudfront.net (CloudFront)
+x-amz-cf-pop: MCI50-P5
+

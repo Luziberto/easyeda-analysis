@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proto EDA — Esquemático</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%233b82f6' width='32' height='32' rx='6'/><path stroke='%23fff' stroke-width='2' fill='none' d='M8 16h6M18 16h6M14 10v12'/></svg>">
+  <link rel="stylesheet" href="./src/ui/styles.css">
+</head>
+<body>
+  <header id="header">
+    <div class="brand">Proto EDA<small>esquemático v2</small></div>
+    <div class="tool-group">
+      <button type="button" id="newDoc" title="Novo documento">Novo</button>
+      <label class="btn"><button type="button" id="openBtn">Abrir</button><input id="open" type="file" accept=".json,application/json" hidden></label>
+      <button type="button" id="save">Salvar JSON</button>
+      <label class="btn"><button type="button" id="importStdBtn">Importar EasyEDA</button><input id="importStd" type="file" accept=".json,application/json" hidden></label>
+    </div>
+    <div class="tool-group">
+      <button type="button" id="wireBtn" title="W — clique adiciona vértices; duplo clique ou Enter termina">Fio (W)</button>
+      <button type="button" id="rename" title="Renomear rede do item selecionado">Renomear rede</button>
+      <button type="button" id="rot" title="R">Girar (R)</button>
+      <button type="button" id="flip" title="X — espelhar horizontal">Espelhar (X)</button>
+      <button type="button" id="del" class="danger" title="Delete">Excluir</button>
+      <button type="button" id="undo" title="Ctrl+Z">Desfazer</button>
+      <button type="button" id="redo" title="Ctrl+Y">Refazer</button>
+    </div>
+    <div class="tool-group">
+      <button type="button" id="netlistBtn">Netlist</button>
+      <button type="button" id="fit" title="Reset zoom e pan">Enquadrar</button>
+    </div>
+  </header>
+
+  <div id="workspace">
+    <nav id="palette" aria-label="Componentes">
+      <button type="button" data-add="resistor" title="Resistor"><span class="ico">⏚</span> R</button>
+      <button type="button" data-add="capacitor" title="Capacitor"><span class="ico">⎓</span> C</button>
+      <button type="button" data-add="led" title="LED"><span class="ico">◉</span> LED</button>
+      <button type="button" data-add="ground" title="GND"><span class="ico">⏚</span> GND</button>
+      <button type="button" data-add="vcc" title="VCC"><span class="ico">+</span> VCC</button>
+      <button type="button" data-add="netlabel" title="Rótulo de rede"><span class="ico">N</span> Rótulo</button>
+      <button type="button" data-add="port" title="Porta"><span class="ico">▷</span> Porta</button>
+    </nav>
+    <div id="canvas-wrap">
+      <svg id="canvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Área de desenho"></svg>
+      <div id="marquee" aria-hidden="true"></div>
+    </div>
+    <aside id="sidebar">
+      <div id="tabs">
+        <button type="button" data-tab="inspector" class="active">Inspector</button>
+        <button type="button" data-tab="netlist">Netlist</button>
+        <button type="button" data-tab="help">Atalhos</button>
+      </div>
+      <div id="panel-inspector" class="panel active">
+        <h3>Seleção</h3>
+        <div id="inspectorBody" class="muted">Nenhum item selecionado.</div>
+      </div>
+      <div id="panel-netlist" class="panel">
+        <h3>Netlist e avisos</h3>
+        <pre id="out">Clique em "Netlist" na barra superior ou edite o esquemático.</pre>
+      </div>
+      <div id="panel-help" class="panel">
+        <h3>Atalhos</h3>
+        <div class="help-kbd">
+          <kbd>W</kbd><span>Modo fio (clique = vértice; duplo clique / Enter = terminar)</span>
+          <kbd>Esc</kbd><span>Cancelar fio / limpar seleção</span>
+          <kbd>X</kbd><span>Espelhar horizontalmente</span>
+          <kbd>R</kbd><span>Girar seleção</span>
+          <kbd>Delete</kbd><span>Excluir seleção</span>
+          <kbd>Shift+clique</kbd><span>Adicionar à seleção</span>
+          <kbd>Arrastar vazio</kbd><span>Seleção por caixa</span>
+          <kbd>Alt</kbd><span>Meio passo da grade (5 px)</span>
+          <kbd>Scroll</kbd><span>Zoom no cursor</span>
+          <kbd>Botão do meio / direito</kbd><span>Pan</span>
+          <kbd>Ctrl+Z / Ctrl+Y</kbd><span>Desfazer / refazer</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer id="foot">
+    <span id="status"></span>
+    <span id="warnings"></span>
+  </footer>
+
+  <div id="dialog" hidden>
+    <div id="dialogCard">
+      <p id="dialogTitle"></p>
+      <input id="dialogInput" type="text" autocomplete="off">
+      <div id="dialogActions">
+        <button type="button" id="dialogCancel">Cancelar</button>
+        <button type="button" id="dialogOk" class="primary">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./dist/ui/app.js"></script>
+</body>
+</html>

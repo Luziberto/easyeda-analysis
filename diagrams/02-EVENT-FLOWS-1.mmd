@@ -1,0 +1,14 @@
+sequenceDiagram
+  participant U as Usuário
+  participant Shell as Casca (main.min.js)
+  participant Tab as Iframe do documento
+  participant W as Worker
+  participant S as Servidor
+  U->>Shell: atalho / menu (cmd=...)
+  Shell->>Tab: fi(cmd, args, frame)
+  Tab->>Tab: altera SVG DOM + jsonCache, empilha undo
+  Tab-->>Shell: getDocStatus {canUndo, canRedo, ...}
+  Tab->>W: postMessage (copper / ratLine / RTree / clearance)
+  W-->>Tab: copper / ratLineMgr.buildAllNet:result / testClearanceDone
+  U->>Shell: Ctrl+S
+  Shell->>S: POST /api/documents/{uuid}/update (dataStr)

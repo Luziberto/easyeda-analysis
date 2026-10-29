@@ -1,0 +1,13 @@
+{
+ "head": {
+  "docType": "5",
+  "editorVersion": "6.5.0"
+ },
+ "schematics": [
+  {
+   "docType": "1",
+   "title": "Sheet_1",
+   "dataStr": "{\"head\":{\"docType\":\"1\",\"editorVersion\":\"6.5.0\",\"c_para\":{\"Prefix Start\":\"1\"},\"x\":\"0\",\"y\":\"0\",\"hasIdFlag\":true,\"importFlag\":0,\"transformList\":\"\"},\"canvas\":\"CA~1000~1000~#FFFFFF~yes~#CCCCCC~5~1000~1000~line~5~pixel~5~0~0\",\"shape\":[\"LIB~400~300~package`R0603`Contributor`synthetic`~0~0~gge_r1~~~0~~yes~yes#@$R~390~296~~~20~8~#A00000~1~0~none~gge_r1b~0#@$P~show~0~1~380~300~180~gge_r1p1~0^^380~300^^M 380 300 h 10~#880000^^1~392~304~0~1~start~~~#0000FF^^1~385~299~0~1~end~~~#0000FF^^0~383~300^^0~M 380 300#@$P~show~0~2~420~300~0~gge_r1p2~0^^420~300^^M 420 300 h 10~#880000^^1~432~304~0~2~start~~~#0000FF^^1~425~299~0~2~end~~~#0000FF^^0~423~300^^0~M 420 300#@$T~P~400~290~0~#000080~Arial~~~~~comment~R1~1~middle~gge_r1t~0\",\"LIB~470~300~package`LED0603`~0~0~gge_d1~~~0~~yes~yes#@$PL~465 295 465 305 475 300 465 295~#A00000~1~0~none~gge_d1b~0#@$P~show~0~1~460~300~180~gge_d1p1~0^^460~300^^M 460 300 h 10~#880000^^1~472~304~0~1~start~~~#0000FF^^1~465~299~0~1~end~~~#0000FF^^0~463~300^^0~M 460 300#@$P~show~0~2~480~300~0~gge_d1p2~0^^480~300^^M 480 300 h 10~#880000^^1~492~304~0~2~start~~~#0000FF^^1~485~299~0~2~end~~~#0000FF^^0~483~300^^0~M 480 300\",\"W~420 300 460 300~#008800~1~0~none~gge_w1~0\",\"W~380 300 360 300~#008800~1~0~none~gge_w2~0\",\"W~480 300 500 300 500 320~#008800~1~0~none~gge_w3~0\",\"N~360~300~0~#000080~VCC~gge_n1~start~362~296~Times New Roman~7pt~0\",\"N~500~320~0~#000080~GND~gge_n2~start~502~316~Times New Roman~7pt~0\",\"J~440~300~2.5~#CC0000~gge_j1~0\",\"O~600~600~gge_o1~#33cc33~0\",\"ZZ~campo~desconhecido~preservado\"],\"BBox\":{\"x\":350,\"y\":280,\"width\":160,\"height\":50},\"colors\":{}}"
+  }
+ ]
+}

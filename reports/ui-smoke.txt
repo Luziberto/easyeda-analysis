@@ -1,0 +1,6 @@
+app.js e easyeda-std.js sintaxe OK (29/10/2026 01:55 BRT)
+index.html 200 text/html
+src/ui/app.js 200 text/javascript
+src/core/model.js 200 text/javascript
+src/core/library.js 200 text/javascript
+src/format/easyeda-std.js 200 text/javascript

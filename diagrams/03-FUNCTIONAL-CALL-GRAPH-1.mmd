@@ -1,0 +1,9 @@
+graph LR
+  UI[cmd= / atalho] --> D[Despachante]
+  D -->|fi(frame)| T[Editor no iframe]
+  T --> M[SVG DOM + jsonCache]
+  T --> WK[Worker]
+  T --> G[Gerador Gerber/Excellon]
+  T --> R[Cliente Autorouter WS]
+  T --> API["/api/documents/*"]
+  EXT[Extensões] -->|easyeda.extension| D

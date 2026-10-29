@@ -1,0 +1,45 @@
+{
+ "head": {
+  "docType": "3",
+  "editorVersion": "6.5.0",
+  "newgId": true,
+  "c_para": {},
+  "x": "4020",
+  "y": "3020",
+  "hasIdFlag": true
+ },
+ "canvas": "CA~2400~2400~#000000~yes~#FFFFFF~10~1200~1200~line~0.5~mm~1~45~visible~0.5~4000~3000~0~yes",
+ "shape": [
+  "FOOTPRINT~4000~3000~package`R0603`~0~~gge_fp1~0#@$PAD~RECT~3997~3000~3~3~1~VCC~1~0~3995.5 2998.5 3998.5 2998.5 3998.5 3001.5 3995.5 3001.5~0~gge_pad1~0~~Y~0~0~0.2~3997,3000#@$PAD~RECT~4003~3000~3~3~1~N1~2~0~4001.5 2998.5 4004.5 2998.5 4004.5 3001.5 4001.5 3001.5~0~gge_pad2~0~~Y~0~0~0.2~4003,3000#@$TRACK~0.6~3~~3994 2997 4006 2997 4006 3003 3994 3003 3994 2997~gge_silk1~0",
+  "TRACK~1~1~N1~4003 3000 4010 3000 4010 3010~gge_t1~0",
+  "VIA~4010~3010~2.4~N1~0.6~gge_v1~0",
+  "HOLE~3980~2980~3.2~gge_h1~0",
+  "TRACK~1~10~~3970 2970 4030 2970 4030 3030 3970 3030 3970 2970~gge_outline~0"
+ ],
+ "layers": [
+  "1~TopLayer~#FF0000~true~true~true~",
+  "2~BottomLayer~#0000FF~true~false~true~",
+  "10~BoardOutLine~#FF00FF~true~false~true~"
+ ],
+ "objects": [
+  "All~true~false"
+ ],
+ "BBox": {
+  "x": 3970,
+  "y": 2970,
+  "width": 60,
+  "height": 60
+ },
+ "preference": {
+  "hideFootprints": "",
+  "hideNets": ""
+ },
+ "DRCRULE": {
+  "Default": {
+   "trackWidth": 1,
+   "clearance": 0.6,
+   "viaHoleDiameter": 2.4,
+   "viaHoleD": 1.2
+  }
+ }
+}
