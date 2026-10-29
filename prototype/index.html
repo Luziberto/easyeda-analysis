@@ -3,13 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Proto EDA — Esquemático</title>
+  <title>Proto EDA — Esquemático + PCB</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%233b82f6' width='32' height='32' rx='6'/><path stroke='%23fff' stroke-width='2' fill='none' d='M8 16h6M18 16h6M14 10v12'/></svg>">
   <link rel="stylesheet" href="./src/ui/styles.css">
 </head>
 <body>
   <header id="header">
-    <div class="brand">Proto EDA<small>esquemático v2</small></div>
+    <div class="brand">Proto EDA<small>v3 + PCB</small></div>
+    <div class="tool-group mode-group" role="tablist" aria-label="Modo de edição">
+      <button type="button" id="modeSch" class="mode on" data-mode="sch">Esquemático</button>
+      <button type="button" id="modePcb" class="mode" data-mode="pcb">PCB</button>
+    </div>
     <div class="tool-group">
       <button type="button" id="newDoc" title="Novo documento">Novo</button>
       <label class="btn"><button type="button" id="openBtn">Abrir</button><input id="open" type="file" accept=".json,application/json" hidden></label>
@@ -18,6 +22,7 @@
     </div>
     <div class="tool-group">
       <button type="button" id="wireBtn" title="W — clique adiciona vértices; duplo clique ou Enter termina">Fio (W)</button>
+      <button type="button" id="busBtn" title="B — barramento">Barramento (B)</button>
       <button type="button" id="rename" title="Renomear rede do item selecionado">Renomear rede</button>
       <button type="button" id="rot" title="R">Girar (R)</button>
       <button type="button" id="flip" title="X — espelhar horizontal">Espelhar (X)</button>
@@ -26,12 +31,17 @@
       <button type="button" id="redo" title="Ctrl+Y">Refazer</button>
     </div>
     <div class="tool-group">
+      <button type="button" id="exportKicad" title="Netlist .net">KiCad .net</button>
+      <button type="button" id="exportSpice" title="SPICE .cir">SPICE</button>
+      <button type="button" id="exportBom" title="BOM CSV">BOM</button>
+      <button type="button" id="exportSvg" title="SVG da folha ativa">SVG</button>
+      <button type="button" id="printSch" title="PDF via impressão">PDF</button>
       <button type="button" id="netlistBtn">Netlist</button>
       <button type="button" id="fit" title="Reset zoom e pan">Enquadrar</button>
     </div>
   </header>
 
-  <div id="workspace">
+  <div id="workspace" class="sch-mode">
     <nav id="palette" aria-label="Componentes">
       <button type="button" data-add="resistor" title="Resistor"><span class="ico">⏚</span> R</button>
       <button type="button" data-add="capacitor" title="Capacitor"><span class="ico">⎓</span> C</button>
@@ -40,15 +50,23 @@
       <button type="button" data-add="vcc" title="VCC"><span class="ico">+</span> VCC</button>
       <button type="button" data-add="netlabel" title="Rótulo de rede"><span class="ico">N</span> Rótulo</button>
       <button type="button" data-add="port" title="Porta"><span class="ico">▷</span> Porta</button>
+      <button type="button" data-add="inverter" title="Inversor CMOS"><span class="ico">¬</span> U</button>
+      <button type="button" data-add="annotate" title="Texto"><span class="ico">T</span> Nota</button>
+      <button type="button" data-add="generic" title="Bloco IC 2 pinos"><span class="ico">▢</span> IC</button>
     </nav>
-    <div id="canvas-wrap">
+    <div id="canvas-column">
+      <div id="sheetTabs" aria-label="Folhas do projeto"></div>
+      <div id="canvas-wrap">
       <svg id="canvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Área de desenho"></svg>
       <div id="marquee" aria-hidden="true"></div>
+      </div>
     </div>
     <aside id="sidebar">
       <div id="tabs">
         <button type="button" data-tab="inspector" class="active">Inspector</button>
         <button type="button" data-tab="netlist">Netlist</button>
+        <button type="button" data-tab="erc">ERC</button>
+        <button type="button" data-tab="library">Símbolos</button>
         <button type="button" data-tab="help">Atalhos</button>
       </div>
       <div id="panel-inspector" class="panel active">
@@ -59,10 +77,24 @@
         <h3>Netlist e avisos</h3>
         <pre id="out">Clique em "Netlist" na barra superior ou edite o esquemático.</pre>
       </div>
+      <div id="panel-erc" class="panel">
+        <h3>ERC (heurístico)</h3>
+        <button type="button" id="ercRun" class="primary">Executar ERC</button>
+        <pre id="ercOut" class="erc-out">Clique em Executar ERC para analisar o projeto.</pre>
+      </div>
+      <div id="panel-library" class="panel">
+        <h3>Símbolo customizado</h3>
+        <div class="field"><label>Nome</label><input id="symName" value="MeuBloco"></div>
+        <div class="field"><label>Prefixo ref.</label><input id="symPrefix" value="IC"></div>
+        <button type="button" id="symPlaceCustom" class="primary">Colocar bloco 2 pinos</button>
+        <p class="muted">Registra na biblioteca do projeto e insere um retângulo com pinos 1 e 2.</p>
+      </div>
       <div id="panel-help" class="panel">
         <h3>Atalhos</h3>
         <div class="help-kbd">
           <kbd>W</kbd><span>Modo fio (clique = vértice; duplo clique / Enter = terminar)</span>
+          <kbd>B</kbd><span>Modo barramento (mesma lógica do fio)</span>
+          <kbd>+ Folha</kbd><span>Abas acima do canvas; duplo clique renomeia</span>
           <kbd>Esc</kbd><span>Cancelar fio / limpar seleção</span>
           <kbd>X</kbd><span>Espelhar horizontalmente</span>
           <kbd>R</kbd><span>Girar seleção</span>
@@ -78,8 +110,32 @@
     </aside>
   </div>
 
+  <div id="pcbWorkspace">
+    <div class="pcb-toolbar">
+      <button type="button" id="pcbSync" class="primary">Atualizar do esquemático</button>
+      <button type="button" id="pcbLayerTop" class="on">Top</button>
+      <button type="button" id="pcbLayerBot">Bottom</button>
+      <button type="button" id="pcbTrack">Trilha (T)</button>
+      <button type="button" id="pcbVia">Via (V)</button>
+      <button type="button" id="pcbRats">Ratsnest</button>
+      <label class="btn"><button type="button" id="pcbImportBtn">Import PCB</button><input id="pcbImport" type="file" accept=".json" hidden></label>
+      <button type="button" id="pcbRoute">Walk (L)</button>
+      <button type="button" id="pcbPour">Pour</button>
+      <button type="button" id="pcbPourGnd">Pour GND</button>
+      <button type="button" id="pcbWebGl">WebGL</button>
+      <button type="button" id="pcbFab">Fab (5 ficheiros)</button>
+      <button type="button" id="pcbPnP">Pick&amp;Place</button>
+      <button type="button" id="pcbDrc">DRC</button>
+      <button type="button" id="pcbFit">Enquadrar</button>
+    </div>
+    <svg id="pcbCanvas" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Editor PCB"></svg>
+    <canvas id="pcbGl" aria-label="Editor PCB WebGL"></canvas>
+    <pre id="pcbDrcOut" class="pcb-drc"></pre>
+  </div>
+
   <footer id="foot">
     <span id="status"></span>
+    <span id="pcbStatus" hidden></span>
     <span id="warnings"></span>
   </footer>
 

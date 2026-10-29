@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && node --test tests/*.test.mjs ../tests/*.test.mjs",
+    "validate-gerber": "npm run build && node tools/validate-gerber.mjs",
     "test:e2e": "npm run build && playwright test",
     "serve": "npm run build && python3 -m http.server 8080",
     "check": "tsc --noEmit"

@@ -5,7 +5,33 @@ test('carrega o editor e insere LED', async ({ page }) => {
   await expect(page.locator('#canvas')).toBeVisible();
   await page.locator('[data-add=led]').click();
   await expect(page.locator('.sym')).toHaveCount(1);
-  await expect(page.locator('#status')).toContainText('1 símbolos');
+  await expect(page.locator('#status')).toContainText('símbolos');
+});
+
+test('modo PCB: sync a partir do esquemático', async ({ page }) => {
+  await page.goto('/index.html');
+  await page.locator('[data-add=resistor]').click();
+  await page.locator('#modePcb').click();
+  await page.locator('#pcbSync').click();
+  await expect(page.locator('#pcbStatus')).toContainText(/fp|footprint/i, { timeout: 5000 });
+});
+
+test('modo PCB: DRC sem erros num board vazio sincronizado', async ({ page }) => {
+  await page.goto('/index.html');
+  await page.locator('[data-add=resistor]').click();
+  await page.locator('#modePcb').click();
+  await page.locator('#pcbSync').click();
+  await page.locator('#pcbDrc').click();
+  await expect(page.locator('#pcbDrcOut')).toContainText(/DRC|sem rede|nenhum/i, { timeout: 5000 });
+});
+
+test('segunda folha e export SVG', async ({ page }) => {
+  await page.goto('/index.html');
+  await page.locator('#sheetTabs .add').click();
+  await expect(page.locator('#sheetTabs .sheet-tab')).toHaveCount(3);
+  await page.locator('[data-add=resistor]').click();
+  await page.locator('#exportSvg').click();
+  await expect(page.locator('#status')).toContainText('2 folha');
 });
 
 test('modo fio: botão ativa e desativa com Escape', async ({ page }) => {

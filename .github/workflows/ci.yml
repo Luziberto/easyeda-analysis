@@ -35,3 +35,22 @@ jobs:
         working-directory: prototype
       - run: npm run test:e2e
         working-directory: prototype
+
+  gerber:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: prototype/package-lock.json
+      - name: Instalar gerbv
+        run: sudo apt-get update && sudo apt-get install -y gerbv xvfb
+      - run: npm ci
+        working-directory: prototype
+      - name: Validar Gerber (estrutura + gerbv)
+        working-directory: prototype
+        env:
+          GERBER_STRICT: '1'
+        run: xvfb-run -a npm run validate-gerber

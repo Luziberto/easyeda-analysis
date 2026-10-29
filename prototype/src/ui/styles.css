@@ -40,6 +40,67 @@ body {
 .brand small { font-weight: 500; color: var(--text-muted); font-size: 11px; margin-left: 6px; }
 .tool-group { display: flex; gap: 4px; align-items: center; padding: 0 8px; border-left: 1px solid var(--border); }
 .tool-group:first-of-type { border-left: none; padding-left: 0; }
+.mode-group .mode.on { background: var(--accent-soft); border-color: var(--accent); }
+
+#pcbWorkspace {
+  display: none;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #1a2e1a;
+}
+#pcbWorkspace[hidden] { display: none !important; }
+.pcb-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+#pcbCanvas { flex: 1; background: #0f172a; cursor: crosshair; }
+.pcb-drc {
+  flex: 0 0 80px;
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  font: 11px ui-monospace, monospace;
+  background: #0f172a;
+  color: var(--warn);
+  border-top: 1px solid var(--border);
+}
+body.pcb-mode #workspace { display: none; }
+body.pcb-mode #pcbWorkspace { display: flex !important; }
+body.pcb-mode #pcbStatus { display: inline; }
+body.pcb-mode #status { display: none; }
+#pcbStatus { display: none; flex: 0 0 52%; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted); }
+
+.pcb-outline { stroke: #f472b6; stroke-width: 1.5; }
+.pcb-track { stroke: #fbbf24; fill: none; stroke-width: 2; }
+.pcb-track.bottom { stroke: #60a5fa; opacity: 0.85; }
+.pcb-track.preview { stroke-dasharray: 4 3; opacity: 0.7; }
+.pcb-body { fill: #334155; stroke: #94a3b8; stroke-width: 1; }
+.pcb-fp.sel .pcb-body { stroke: #3b82f6; stroke-width: 2; }
+.pcb-pad { fill: #b45309; stroke: #78350f; stroke-width: 0.5; }
+.pcb-pad.net { fill: #15803d; }
+.pcb-pour { fill: rgba(234, 179, 8, 0.25); stroke: #ca8a04; stroke-width: 1; }
+.pcb-pour-cut { fill: rgba(15, 23, 42, 0.85); stroke: #64748b; stroke-width: 0.5; pointer-events: none; }
+.pcb-pour.preview { fill: none; }
+#pcbGl { display: none; flex: 1; width: 100%; background: #0f172a; }
+.pcb-via { fill: #eab308; stroke: #713f12; stroke-width: 1; }
+.pcb-drc-mark { fill: none; stroke: #ef4444; stroke-width: 2; pointer-events: none; }
+.sheet-tab.rm { padding: 2px 8px; color: var(--danger); }
+.annotate.sel { fill: #2563eb; }
+.value { font-size: 8px; fill: #64748b; }
+
+@media print {
+  #header, #palette, #sidebar, #foot, #sheetTabs, .pcb-toolbar { display: none !important; }
+  #workspace, #canvas-wrap, #canvas { display: block !important; height: auto !important; }
+  body { overflow: visible; background: #fff; }
+  .sym path { stroke: #000; }
+  .wire { stroke: #000; }
+}
 
 button, .btn {
   font: inherit;
@@ -78,6 +139,25 @@ label.btn { display: inline-flex; align-items: center; }
   line-height: 1.1;
 }
 #palette button .ico { font-size: 16px; line-height: 1; }
+
+#canvas-column { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; }
+#sheetTabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 2px;
+  padding: 4px 6px;
+  background: #0f172a;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.sheet-tab {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: #334155;
+  border-radius: 6px 6px 0 0;
+}
+.sheet-tab.active { background: var(--bg-canvas); color: #0f172a; font-weight: 600; }
+.sheet-tab.add { background: transparent; border-style: dashed; }
 
 #canvas-wrap {
   flex: 1 1 0;
@@ -171,6 +251,8 @@ label.btn { display: inline-flex; align-items: center; }
 }
 #status { flex: 0 0 52%; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted); }
 #warnings { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--warn); }
+#warnings.erc-err { color: var(--danger); }
+.erc-out { margin-top: 8px; max-height: 280px; overflow: auto; }
 
 #dialog {
   position: fixed;
@@ -198,7 +280,10 @@ label.btn { display: inline-flex; align-items: center; }
 .sym.sel path { stroke: var(--sel); stroke-width: 2; }
 .pin { fill: #dc2626; }
 .wire { stroke: var(--wire); stroke-width: 1.5; fill: none; }
+.wire.bus, .wire.bus.preview { stroke: #1d4ed8; stroke-width: 3; }
+.wire.preview { stroke-dasharray: 4 3; opacity: 0.85; }
 .wire.sel { stroke: var(--sel); stroke-width: 2; }
+.wire.bus.sel { stroke-width: 3.5; }
 .junction { fill: var(--wire); }
 .ref { font-size: 9px; fill: #1e293b; }
 .netname { font-size: 9px; fill: #047857; font-weight: 600; }

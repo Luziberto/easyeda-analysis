@@ -6,7 +6,7 @@ import { Commands, hitPin, hitSymbol, hitWire, symbolBBox } from '../core/model.
 export const DBL_MS = 350;      // janela de duplo clique detectada pelo próprio controlador
 export const DRAG_MIN = 4;      // deslocamento mínimo (unid. de mundo) para virar arrasto
 
-export function createTool() { return { mode: 'idle', wire: null, press: null, lastDown: null }; }
+export function createTool() { return { mode: 'idle', wire: null, wireKind: 'wire', press: null, lastDown: null }; }
 const same = (a, b) => a && b && a.x === b.x && a.y === b.y;
 
 /** Acrescenta p mantendo segmentos ortogonais (cotovelo horizontal-primeiro). */
@@ -18,16 +18,29 @@ export function orthoAppend(points, p) {
   out.push({ x: p.x, y: p.y }); return out;
 }
 export function previewPoints(tool) { return tool.wire ? orthoAppend(tool.wire.points, tool.wire.cur) : []; }
-export function isWireActive(tool) { return tool.mode === 'wire' || !!tool.wire; }
+export function isWireActive(tool) { return tool.mode === 'wire' || tool.mode === 'bus' || !!tool.wire; }
+export function isBusMode(tool) { return tool.mode === 'bus' || (!!tool.wire && tool.wireKind === 'bus'); }
 
-/** Encerra o fio atual. Retorna { points } se houver ≥2 pontos distintos, senão null. Volta ao modo idle. */
+/** Encerra o fio atual. Retorna { points, kind } se houver ≥2 pontos distintos, senão null. Volta ao modo idle. */
 export function finish(tool) {
-  const w = tool.wire; tool.wire = null; tool.press = null; tool.mode = 'idle'; tool.lastDown = null;
+  const w = tool.wire; const kind = tool.wireKind || 'wire';
+  tool.wire = null; tool.press = null; tool.mode = 'idle'; tool.lastDown = null; tool.wireKind = 'wire';
   if (!w || w.points.length < 2) return null;
-  return { points: w.points };
+  return { points: w.points, kind };
 }
-export function cancel(tool) { tool.wire = null; tool.press = null; tool.mode = 'idle'; tool.lastDown = null; }
-export function toggleWireMode(tool) { if (isWireActive(tool)) { const r = finish(tool); return r; } tool.mode = 'wire'; return null; }
+export function cancel(tool) { tool.wire = null; tool.press = null; tool.mode = 'idle'; tool.lastDown = null; tool.wireKind = 'wire'; }
+export function toggleWireMode(tool) {
+  if (tool.mode === 'wire' || (tool.wire && tool.wireKind === 'wire')) {
+    const r = finish(tool); return r;
+  }
+  cancel(tool); tool.mode = 'wire'; tool.wireKind = 'wire'; return null;
+}
+export function toggleBusMode(tool) {
+  if (tool.mode === 'bus' || (tool.wire && tool.wireKind === 'bus')) {
+    const r = finish(tool); return r;
+  }
+  cancel(tool); tool.mode = 'bus'; tool.wireKind = 'bus'; return null;
+}
 
 /**
  * Botão pressionado. p = ponto já com snap (ou pino exato); raw = ponto bruto; onPin = havia pino sob o cursor.
@@ -36,7 +49,7 @@ export function toggleWireMode(tool) { if (isWireActive(tool)) { const r = finis
 export function down(tool, p, { raw = p, onPin = false, t = 0 } = {}) {
   const dbl = tool.lastDown && t - tool.lastDown.t <= DBL_MS && same(tool.lastDown.p, p);
   tool.lastDown = { t, p };
-  if (tool.mode === 'wire' || tool.wire) {
+  if (tool.mode === 'wire' || tool.mode === 'bus' || tool.wire) {
     if (dbl && tool.wire) { const r = finish(tool); return r ? { type: 'commit', ...r } : { type: 'none' }; }
     if (!tool.wire) tool.wire = { points: [{ ...p }], cur: { ...p }, fromDrag: false };
     else tool.wire.points = orthoAppend(tool.wire.points, p);

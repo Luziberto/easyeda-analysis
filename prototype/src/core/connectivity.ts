@@ -1,5 +1,5 @@
 // Conectividade ORIGINAL do protótipo: índice espacial, snap, junções, netlist com nós nomeados e diff contra PCB.
-import { SYMBOLS, ROLE_PRIORITY } from './library.js';
+import { SYMBOLS, ROLE_PRIORITY, defFor } from './library.js';
 
 export const GRID = 10;
 /** Snap a inteiros: passo GRID, ou GRID/2 com Alt. Resultado sempre inteiro. */
@@ -37,7 +37,7 @@ export function rotatePoint(p, rot) {
 }
 export function symbolPins(s) {
   const mir = s.mirror ? -1 : 1;
-  return SYMBOLS[s.kind].pins.map((p) => {
+  return defFor(s).pins.map((p) => {
     const r = rotatePoint({ x: p.x * mir, y: p.y }, s.rot);
     return { sym: s.id, pin: p.num, x: s.x + r.x, y: s.y + r.y };
   });
@@ -181,6 +181,7 @@ export function describeWarning(w) {
     case 'name-overridden': return `nome(s) ${w.names.join(', ')} sobrescrito(s) por ${w.chosen}`;
     case 'name-collision': return `nome ${w.name} repetido em redes distintas → ${w.renamed}`;
     case 'unconnected': return `${w.refs.join(', ')} (${w.names.join(', ')}) sem conexão a nenhum pino`;
+    case 'orphan-port': return `porta ${w.name} só na folha ${w.sheet ?? '?'}`;
     default: return JSON.stringify(w);
   }
 }
