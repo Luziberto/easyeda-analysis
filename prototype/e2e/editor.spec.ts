@@ -60,3 +60,15 @@ test('import EasyEDA sintético', async ({ page }) => {
   await expect(page.locator('#warnings')).toContainText(/Importado/i, { timeout: 5000 });
   await expect(page.locator('.sym')).not.toHaveCount(0);
 });
+
+test('Sim SPICE ngspice wasm no browser', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.goto('/index.html');
+  const summary = await page.evaluate(async () => {
+    const { runSpiceOperatingPoint, formatSpiceOpSummary } = await import('./dist/sim/spice-runner.js');
+    const r = await runSpiceOperatingPoint('V1 1 0 10\nR1 1 2 1k\nR2 2 0 1k\n.op\n.end\n');
+    return formatSpiceOpSummary(r);
+  });
+  expect(summary).toMatch(/ngspice-wasm/);
+  expect(summary).toMatch(/2:/);
+});

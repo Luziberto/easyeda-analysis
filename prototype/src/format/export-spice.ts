@@ -10,6 +10,7 @@ function spiceName(ref: string) {
 function spiceNet(name: string) {
   const n = name.trim();
   if (!n || n === 'NC') return 'NC';
+  if (/^gnd$/i.test(n)) return '0';
   return spiceName(n);
 }
 
@@ -70,12 +71,12 @@ export function exportSpice(project: Project, opts: { includeOp?: boolean } = {}
       const key = `${net}:${/^gnd$/i.test(netName) ? 'gnd' : 'v'}`;
       if (seenPower.has(key)) continue;
       seenPower.add(key);
-      if (/^gnd$/i.test(netName)) lines.push(`V${++vsrc} ${net} 0 0`);
-      else lines.push(`V${++vsrc} ${net} 0 5`);
+      if (/^gnd$/i.test(netName) || net === '0') continue;
+      lines.push(`V${++vsrc} ${net} 0 5`);
     }
   }
 
-  lines.push('DLED D');
+  lines.push('.model DLED D(Is=1e-14 N=1)');
   if (opts.includeOp !== false) {
     lines.push('* ngspice: ngspice deck.cir');
     lines.push('.op');

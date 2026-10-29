@@ -25,6 +25,7 @@ export function createPcbView(svgEl, opts) {
   let routeMode = false;
   let routeStart = null;
   let routeNet = '';
+  let rotDrag = null;
   let pourMode = false;
   let pourPts = null;
   let drcMarkers: { x: number; y: number; message: string }[] = [];
@@ -255,6 +256,25 @@ export function createPcbView(svgEl, opts) {
     render();
   }, { passive: false });
 
+  function onGlDown(e: MouseEvent) {
+    if (!useWebGl || !glRenderer?.isView3d() || e.button !== 0) return;
+    if (trackMode || routeMode || pourMode || viaMode || drag) return;
+    rotDrag = { x: e.clientX, y: e.clientY };
+    e.preventDefault();
+  }
+  function onGlMove(e: MouseEvent) {
+    if (!rotDrag || !glRenderer) return;
+    glRenderer.addRotation((e.clientX - rotDrag.x) * 0.012, (e.clientY - rotDrag.y) * 0.012);
+    rotDrag = { x: e.clientX, y: e.clientY };
+    render();
+  }
+  function onGlUp() { rotDrag = null; }
+  if (webglCanvas) {
+    webglCanvas.addEventListener('mousedown', onGlDown);
+    window.addEventListener('mousemove', onGlMove);
+    window.addEventListener('mouseup', onGlUp);
+  }
+
   return {
     render,
     syncFromSch() {
@@ -325,7 +345,8 @@ export function createPcbView(svgEl, opts) {
       if (!glRenderer) { onMessage?.('WebGL2 indisponível neste navegador.'); return; }
       useWebGl = true;
       glRenderer.setView3d(!glRenderer.isView3d());
-      onMessage?.(glRenderer.isView3d() ? 'Vista 3D (WebGL).' : 'Vista 2D (WebGL).');
+      if (glRenderer.isView3d()) glRenderer.resetRotation();
+      onMessage?.(glRenderer.isView3d() ? 'Vista 3D — arraste para rodar.' : 'Vista 2D (WebGL).');
       render();
     },
     getViewport: () => vp,

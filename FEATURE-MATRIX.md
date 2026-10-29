@@ -82,4 +82,4 @@ Complexidade: B = baixa, M = média, A = alta, MA = muito alta. Prioridade: MVP1
 | Export | KiCad `.net`, SPICE `.cir`, SVG, **BOM CSV**, impressão |
 | Import Std | docType 5 → uma folha por schematic; **B** → bus |
 | **PCB (MVP3)** | Walkaround (+ obstáculos), pour + keepouts, vias, ratsnest MST, Gerber fab (5 ficheiros) + gerbv CI, DRC, WebGL, import PCB + contorno |
-| Testes | 116 unit + 7 e2e |
+| Testes | 119 unit + 8 e2e |

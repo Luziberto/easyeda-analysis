@@ -67,6 +67,7 @@
         <button type="button" data-tab="inspector" class="active">Inspector</button>
         <button type="button" data-tab="netlist">Netlist</button>
         <button type="button" data-tab="erc">ERC</button>
+        <button type="button" data-tab="sim">Sim</button>
         <button type="button" data-tab="library">Símbolos</button>
         <button type="button" data-tab="help">Atalhos</button>
       </div>
@@ -83,6 +84,11 @@
         <button type="button" id="ercRun" class="primary">Executar ERC</button>
         <pre id="ercOut" class="erc-out">Clique em Executar ERC para analisar o projeto.</pre>
       </div>
+      <div id="panel-sim" class="panel">
+        <h3>Simulação SPICE</h3>
+        <p class="muted">Botão <strong>Sim</strong> na barra — ngspice WASM (.op).</p>
+        <pre id="simOut" class="erc-out">Aguardando simulação…</pre>
+      </div>
       <div id="panel-library" class="panel">
         <h3>Símbolo customizado</h3>
         <div class="field"><label>Nome</label><input id="symName" value="MeuBloco"></div>
@@ -97,6 +103,7 @@
           <kbd>B</kbd><span>Modo barramento (mesma lógica do fio)</span>
           <kbd>+ Folha</kbd><span>Abas acima do canvas; duplo clique renomeia</span>
           <kbd>Esc</kbd><span>Cancelar fio / limpar seleção</span>
+          <kbd>3D</kbd><span>PCB WebGL axonométrico — arraste no canvas para rodar</span>
           <kbd>X</kbd><span>Espelhar horizontalmente</span>
           <kbd>R</kbd><span>Girar seleção</span>
           <kbd>Delete</kbd><span>Excluir seleção</span>
@@ -152,6 +159,14 @@
     </div>
   </div>
 
+  <script type="importmap">
+  {
+    "imports": {
+      "@spice-ts/core": "./node_modules/@spice-ts/core/dist/index.js",
+      "eecircuit-engine": "./node_modules/eecircuit-engine/dist/eecircuit-engine.mjs"
+    }
+  }
+  </script>
   <script type="module" src="./dist/ui/app.js"></script>
 </body>
 </html>
