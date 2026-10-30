@@ -1,7 +1,3 @@
 {
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
-  },
-  "install": "mkdir -p data && node --version"
+  "install": "mkdir -p /workspace/data 2>/dev/null || mkdir -p data; node --version; which bash git sqlite3 || true"
 }

@@ -70,3 +70,29 @@ Abrir o protótipo e usar o ícone **Biblioteca LCSC** no header (requer `lcsc-l
 ```bash
 cd prototype && npm test
 ```
+
+### Automation falha ao **iniciar** (“Agent failed to start” / “unexpected error”)
+
+Isto acontece **antes** do `pull.mjs` — não é exit 2 nem rate limit.
+
+| Causa frequente | O que fazer |
+|-----------------|-------------|
+| Snapshot / Environment preso | Push uma alteração em `.cursor/environment.json` → **Rebuild** no dashboard; ou **novo Environment** com outro nome no mesmo repo |
+| GitHub duplicado | Outra conta Cursor ligada ao mesmo repo → **Integrations → GitHub → reconnect** |
+| Modelo **Cursor Router** indisponível no plano | Na automation, escolhe modelo **fixo** (ex. Composer) e **Save** |
+| Billing / on-demand | Dashboard → billing; alguns relatos exigem **on-demand** ligado para automations arrancarem |
+| Bug da plataforma | [status.cursor.com](https://status.cursor.com) — re-save automation depois do incidente |
+
+Teste mínimo na automation (só para validar start):
+
+```text
+Na raiz: node --version && echo ok && ls tools/easyeda-lib-sync/pull-slice.sh
+```
+
+Se isto **também** falhar ao start → Environment/plataforma, não o pull. Envia **Request ID** (bc-…) ao support com Privacy Mode off temporariamente.
+
+Pull completo (depois do start funcionar):
+
+```text
+bash tools/easyeda-lib-sync/pull-slice.sh 240
+```
