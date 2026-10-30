@@ -12,6 +12,12 @@ Objetivo: popular `data/easyeda-components.sqlite` (gitignored) e opcionalmente 
 node --experimental-sqlite tools/easyeda-lib-sync/pull.mjs --max-minutes 240
 ```
 
+Cloud Agent / cron (loop até completo):
+
+```bash
+bash tools/easyeda-lib-sync/pull-slice.sh 240
+```
+
 - **Exit 0** — crawl completo (36 tokens), fetch esgotado, export feito.
 - **Exit 2** — tempo esgotado ou fila a meio; **reexecutar o mesmo comando** na mesma máquina/volume para retomar (`crawl_progress` + SQLite).
 - Logs: `data/lib-sync-pull.log` · estado: `data/lib-sync-status.json`
