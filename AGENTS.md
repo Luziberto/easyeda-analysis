@@ -86,13 +86,7 @@ Isto acontece **antes** do `pull.mjs` — não é exit 2 nem rate limit.
 Teste mínimo na automation (só para validar start):
 
 ```text
-Na raiz: node --version && echo ok && ls tools/easyeda-lib-sync/pull-slice.sh
+bash tools/easyeda-lib-sync/cloud-smoke.sh
 ```
 
-Se isto **também** falhar ao start → Environment/plataforma, não o pull. Envia **Request ID** (bc-…) ao support com Privacy Mode off temporariamente.
-
-Pull completo (depois do start funcionar):
-
-```text
-bash tools/easyeda-lib-sync/pull-slice.sh 240
-```
+Deve imprimir `SMOKE_OK`. Depois substituir por:
