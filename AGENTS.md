@@ -90,3 +90,9 @@ bash tools/easyeda-lib-sync/cloud-smoke.sh
 ```
 
 Deve imprimir `SMOKE_OK`. Depois substituir por:
+
+```text
+bash tools/easyeda-lib-sync/pull-slice.sh 240
+```
+
+Se o smoke **também** falhar ao start → Environment/plataforma. Envia **Request ID** (bc-…) ao support.
